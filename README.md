@@ -14,6 +14,59 @@ The port works by loading the official Android ARMv7 executable in memory, resol
 
 ## Changelog
 
+### v2.1
+
+- Changed some button actions to on press (e.g. jump).
+- Made minor improvements. Thanks to adjutantt.
+- Updated to latest vitaGL.
+
+### v2.0
+
+- Fixed original bug where ITB and the gym treadmill could not be used. Thanks to adjutantt.
+- Added version to bubble.
+
+### v1.9
+
+- Fixed issue where some peds were invisible.
+- Improved performance by using a draw speedhack in vitaGL.
+
+### v1.8
+
+- Updated to latest vitaGL which fixed a lot of bugs found during Bully development.
+
+### v1.7
+
+- Added controls mapping configuration through the companion app. Thanks to Rinnegatamante.
+- Updated to latest vitaGL which improved performance.
+
+### v1.6
+
+- Added a few optimizations.
+- Fixed free aim option.
+- Disabled auto landing gear deployment/retraction. Thanks to adjutantt.
+- Moved plane rudder control to GetTurret. Thanks to XirXes.
+
+### v1.5
+
+- Added option to allow cut radio songs to play.
+  - See [MUSIC.md](MUSIC.md) for how to restore removed songs.
+- Added MP3 fuzzy seek option to improve loading speed.
+- Added custom codes to activate mobile cheats:
+  - "THEFLOW" - Invincibility
+  - "RINNEGATAMANTE" - Weapon set 4
+- Fixed mixed cheat codes.
+- Fixed plane rudder controls.
+- Improved the "Resume" menu entry to load the latest save (manual and auto save).
+  - Selecting the "Quit Game" menu entry will now create a quick-save which can be loaded via the "Resume" menu entry.
+- Improved performance by redirecting mpg123 to our own library.
+- Improved performance by using better algorithms in vitaGL.
+
+### v1.4
+
+- Updated openal for better performance. Thanks to isage.
+- Fixed crash when selecting japanese/russian language. Thanks to adjutantt.
+- Improved control scheme. Thanks to XirXes and darthbellic.
+
 ### v1.3
 
 - Added ability to remap controls with `ux0:data/gtasa/controls.txt`. Thanks to PoisonPoisonPoison.
@@ -45,7 +98,7 @@ The port works by loading the official Android ARMv7 executable in memory, resol
 
 ## Setup Instructions (For End Users)
 
-(If you have already installed the game and want to update to a newer release, you can simply install [GTASA.vpk](https://github.com/TheOfficialFloW/gtasa_vita/releases/download/v1.3/GTASA.vpk) on your *PS Vita*).
+(If you have already installed the game and want to update to a newer release, you can simply install [GTASA.vpk](https://github.com/TheOfficialFloW/gtasa_vita/releases/download/v2.1/GTASA.vpk) on your *PS Vita*).
 
 In order to properly install the game, you'll have to follow these steps precisely:
 
@@ -62,13 +115,13 @@ In order to properly install the game, you'll have to follow these steps precise
 - **Optional**: Install [PSVshell](https://github.com/Electry/PSVshell/releases) to overclock your device to 500Mhz.
 - Install `libshacccg.suprx`, if you don't have it already, by following [this guide](https://samilops2.gitbook.io/vita-troubleshooting-guide/shader-compiler/extract-libshacccg.suprx).
 - Obtain your copy of *Grand Theft Auto: San Andreas v2.00* legally (`com.rockstargames.gtasager` is not supported!) for Android in form of an `.apk` file and one or more `.obb` files (usually `main.8.com.rockstargames.gtasa.obb` and `patch.8.com.rockstargames.gtasa.obb` located inside the `/sdcard/android/obb/com.rockstargames.gtasa/`) folder. [You can get all the required files directly from your phone](https://stackoverflow.com/questions/11012976/how-do-i-get-the-apk-of-an-installed-app-without-root-access) or by using an apk extractor you can find in the play store. The apk can be extracted with whatever Zip extractor you prefer (eg: WinZip, WinRar, etc...) since apk is basically a zip file. You can rename `.apk` to `.zip` to open them with your default zip extractor.
-- Open the apk with your zip explorer, extract the `assets` folder from your `.apk` file to `ux0:data` and rename it to `gtasa`. The result would be `ux0:data/gtasa/`
+- Open the apk with your zip explorer, extract the `assets` folder from your `.apk` file to `ux0:data` and rename it to `gtasa`. The result would be `ux0:data/gtasa/`.
 - Still in the apk, extract the file `libGTASA.so` from the `lib/armeabi-v7a` folder to `ux0:data/gtasa`. 
 - Open the `main.8.com.rockstargames.gtasa.obb` with your zip explorer (`.obb` files are zip files just like `.apk` files so just rename the `.obb` to `.zip`) and extract the contents to `ux0:data/gtasa`.
 - Same as before, open the `patch.8.com.rockstargames.gtasa.obb` with the zip explorer and extract the contents inside the zip to `ux0:data/gtasa`.
-- Download the [gamefiles.zip](https://github.com/TheOfficialFloW/gtasa_vita/releases/download/v1.3/gamefiles.zip) and extract the contents to `ux0:data/gtasa` (if it ask about overwriting files, say yes).
+- Download the [gamefiles.zip](https://github.com/TheOfficialFloW/gtasa_vita/releases/download/v2.1/gamefiles.zip) and extract the contents to `ux0:data/gtasa` (overwrite if asked).
 - **Optional**: For a more authentic console experience, copy the file `ux0:data/gtasa/data/360Default1280x720.cfg` to `ux0:data/gtasa/` and rename it from `360Default1280x720.cfg` to `Adjustable.cfg`. This file is a leftover from the Xbox 360 version and provides you the console HUD (e.g. radar on bottom left).
-- Install [GTASA.vpk](https://github.com/TheOfficialFloW/gtasa_vita/releases/download/v1.3/GTASA.vpk) on your *PS Vita*.
+- Install [GTASA.vpk](https://github.com/TheOfficialFloW/gtasa_vita/releases/download/v2.1/GTASA.vpk) on your *PS Vita*.
 
 If you have followed the steps correctly, this is how your `ux0:data/gtasa` folder should look like.
 
@@ -84,33 +137,45 @@ You can launch the Configurator app by clicking on the `Configuration` button lo
 
 ## Tips and Tricks
 
-- In order to reduce occasional stutters in-game, delete both `ux0:data/gtasa/scache_small_low.txt` and `ux0:data/gtasa/scache_small.txt`, then create a copy of the `ux0:data/gtasa/scache.txt` file to have two version of it. (for example `scache(1).txt` so in the end you end up with both `scache.txt` and `scache(1).txt` inside the `ux0:data/gtasa/` folder), then rename `scache.txt` to `scache_small.txt` and `scache(1).txt` to `scache_small_low.txt` . This will however make the loading screen longer since it needs to compile more shaders ahead.
-  - If the folder `ux0:data/gtasa/cache` contains much more than 300 files, it's recommended to delete the folder and have it rebuilt.
-- You can input PC cheats by pressing L+SELECT to open the on-screen keyboard. See [CHEATS.md](CHEATS.md) for available and unavailable cheats (you can input cheat codes in lowercase as well as uppercase).
+### Gameplay
+
+- You can input PC cheats by pressing **L** + **SELECT** to open the on-screen keyboard. See [CHEATS.md](CHEATS.md) for available and unavailable cheats (you can input cheat codes in lowercase as well as uppercase).
 - The L2/R2 buttons are mapped to the rear touchpad on the top and the L3/R3 buttons are mapped to the front touchpad on the bottom. With v1.2 and higher, you can map L2/R2 to the front touchpad on the top.
 - You can open the map by holding START and then releasing.
+- You can get local freeroam coop and rampages working by replacing the main scripts with those of the PS3 version. See [COOP.md](COOP.md).
+- Due to expired licensing, some songs were cut from the game. See [MUSIC.md](MUSIC.md) for a list of removed tracks and a guide on how to restore them.
+- To properly take off during *Learning to Fly* mission, retract your landing gear by pressing **RIGHT**.
+
+### Performance
+
+- In order to reduce occasional stutters in-game, delete both `ux0:data/gtasa/scache_small_low.txt` and `ux0:data/gtasa/scache_small.txt`, then create a copy of the `ux0:data/gtasa/scache.txt` file to have two version of it. (for example `scache(1).txt` so in the end you end up with both `scache.txt` and `scache(1).txt` inside the `ux0:data/gtasa/` folder), then rename `scache.txt` to `scache_small.txt` and `scache(1).txt` to `scache_small_low.txt` . This will however make the loading screen longer since it needs to compile more shaders ahead.
+  - If the folder `ux0:data/gtasa/cache` contains much more than 300 files, it's recommended to delete the folder and have it rebuilt.
+
 - In order to save storage on your Memory Card, you can safely delete all files in sub-folders of `ux0:data/gtasa/texdb` which end with:
   - `.dxt.dat`, `.dxt.tmb`, `dxt.toc`
   - `.etc.dat`, `.etc.tmb`, `etc.toc`
-- To get local freeroam coop and rampages working you will need to replace the main scripts with those of the PS3 version:
-  - Keep in mind that saves made with the old files will be incompatible with a game using the new files and vice-versa.
-  - Obtain `mainPS3.scm` and `scriptps3.img` from the `/PS3_GAME/USRDIR/PS3Data.obb -> /data/script` folder of a PS3 copy. In order to extract the `.obb` file rename it to `.zip` and use your favorite archive extractor.
-  - Rename the files to `mainV1.scm` and `scriptv1.img` and copy them to both `ux0:data/gtasa/data/` and `ux0:data/gtasa/data/script/` replacing both original files in both directories each time.
-  - To use the multiplayer functionality navigate to a corresponding marker (a list can be found here [Marker locations](https://gta.fandom.com/wiki/Multiplayer_in_GTA_San_Andreas) ). You will have to have another controller connected via Bluetooth and set up as controller number 2 (you can configure that via the qick menu, accessible by holding the PS-Button on that controller once connected).
-  - On a PSVita (as opposed to on a PSTV) you will also need to use [MiniVitaTV](https://github.com/TheOfficialFloW/MiniVitaTV) to connect the controller in the first place.
-  
+
 ## Build Instructions (For Developers)
 
 In order to build the loader, you'll need a [vitasdk](https://github.com/vitasdk) build fully compiled with softfp usage.  
-You can find a precompiled version here: [Linux](https://github.com/vitasdk/buildscripts/suites/1824103476/artifacts/35161735) / [Windows](https://github.com/vitasdk/buildscripts/suites/1836262288/artifacts/35501612).  
+You can find a precompiled version here: https://github.com/vitasdk/buildscripts/actions/runs/1102643776.  
 Additionally, you'll need these libraries to be compiled as well with `-mfloat-abi=softfp` added to their CFLAGS:
 
-- [openal-soft](https://github.com/Rinnegatamante/openal-soft)
+- [mpg123](http://www.mpg123.de/download/mpg123-1.25.10.tar.bz2)
 
-  - Remove `-ftree-vectorize` from `Makefile.vita`.
+  - Apply [mpg123.patch](https://github.com/vitasdk/packages/blob/master/mpg123/mpg123.patch) using `patch -Np0 -i mpg123.patch`.
 
   - ```bash
-    make -f Makefile.vita install
+    autoreconf -fi
+    CFLAGS="-DPSP2 -mfloat-abi=softfp" ./configure --host=arm-vita-eabi --prefix=$VITASDK/arm-vita-eabi --disable-shared --enable-static --enable-fifo=no --enable-ipv6=no --enable-network=no --enable-int-quality=no --with-cpu=neon --with-default-audio=dummy --with-optimization=3
+    make install
+    ```
+
+- [openal-soft](https://github.com/isage/openal-soft/tree/vita-1.19.1)
+
+  - ```bash
+    cd build
+    cmake -DCMAKE_TOOLCHAIN_FILE=${VITASDK}/share/vita.toolchain.cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_FLAGS=-mfloat-abi=softfp .. && make install
     ```
 
 - [libmathneon](https://github.com/Rinnegatamante/math-neon)
@@ -141,7 +206,7 @@ Additionally, you'll need these libraries to be compiled as well with `-mfloat-a
 - [vitaGL](https://github.com/Rinnegatamante/vitaGL)
 
   - ````bash
-    make HAVE_SBRK=1 SOFTFP_ABI=1 SHARED_RENDERTARGETS=1 NO_DEBUG=1 install
+    make SOFTFP_ABI=1 SHARED_RENDERTARGETS=1 DRAW_SPEEDHACK=1 NO_DEBUG=1 install
     ````
 
 Finally, in the folder of `gtasa_vita`, install SceLibc stubs using:
@@ -165,4 +230,6 @@ cmake .. && make
 - frangarcj, fgsfds and Bythos for graphics-related stuff.
 - CBPS/SonicMastr for PIB, which was used on earlier stages of development.
 - isage for the native audio backend for OpenAL-Soft.
-- JonathanERC and gtagmodding for the Cheat List 
+- Adjutantt for patching the scripts and making various improvements to the port.
+- XirXes and shadowknight for the audio conversion script.
+- JonathanERC and gtagmodding for the Cheat List.

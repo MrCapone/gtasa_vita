@@ -6,6 +6,7 @@
  * of the MIT license.  See the LICENSE file for details.
  */
 
+#include <psp2/io/fcntl.h>
 #include <psp2/ctrl.h>
 #include <psp2/touch.h>
 #include <vitaGL.h>
@@ -138,6 +139,10 @@ int GetGamepadButtons(int port) {
   if (pad.buttons & SCE_CTRL_R3)
     mask |= 0x2000;
 
+  // Do not pan camera when entering cheat dialog
+  if ((mask & 0x20) && (mask & 0x40))
+    mask &= ~(0x20 | 0x40);
+
   if (port == 0) {
     for (int i = 0; i < touch_front.reportNum; i++) {
       if (touch_front.report[i].y >= (panelInfoFront.minAaY + panelInfoFront.maxAaY) / 2) {
@@ -193,7 +198,7 @@ float GetGamepadAxis(int port, int axis) {
                 if (touch_front.report[i].x >= config.touch_x_margin)
                   if (axis == 4) val = 1.0f;
               } else {
-                if (touch_back.report[i].x < (panelInfoFront.maxAaX - config.touch_x_margin))
+                if (touch_front.report[i].x < (panelInfoFront.maxAaX - config.touch_x_margin))
                   if (axis == 5) val = 1.0f;
               }
             }
@@ -387,13 +392,13 @@ int GetEnv(void *vm, void **env, int r2) {
 }
 
 void jni_load(void) {
-  *(int *)so_find_addr("IsAndroidPaused") = 0; // it's 1 by default
+  *(int *)so_symbol(&gtasa_mod, "IsAndroidPaused") = 0; // it's 1 by default
 
   memset(fake_vm, 'A', sizeof(fake_vm));
   *(uintptr_t *)(fake_vm + 0x00) = (uintptr_t)fake_vm; // just point to itself...
   *(uintptr_t *)(fake_vm + 0x18) = (uintptr_t)GetEnv;
 
-  int (* JNI_OnLoad)(void *vm, void *reserved) = (void *)so_find_addr("JNI_OnLoad");
+  int (* JNI_OnLoad)(void *vm, void *reserved) = (void *)so_symbol(&gtasa_mod, "JNI_OnLoad");
   JNI_OnLoad(fake_vm, NULL);
 
   int (* init)(void *env, int r1, int init_graphics) = *(void **)(natives + 8);

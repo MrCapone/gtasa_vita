@@ -10,7 +10,6 @@
 #include "config.h"
 #include "opengl_patch.h"
 
-
 /*
  * RW
  */
@@ -120,7 +119,6 @@ struct RwFrame
 };
 RwFrame *(*RwFrameTransform)(RwFrame * frame, const RwMatrix * m, RwOpCombineType combine);
 
-
 typedef struct RwObjectHasFrame RwObjectHasFrame;
 typedef RwObjectHasFrame * (*RwObjectHasFrameSyncFunction)(RwObjectHasFrame *object);
 struct RwObjectHasFrame
@@ -147,7 +145,6 @@ struct RpLight
 };
 #define RpLightGetParent(light) ((RwFrame*)rwObjectGetParent(light))
 RpLight *(*RpLightSetColor)(RpLight *light, const RwRGBAReal *color);
-
 
 typedef struct RwTexture RwTexture;
 typedef struct RxPipeline RxPipeline;
@@ -286,7 +283,6 @@ _rwOpenGLLightsSetMaterialProperties(const RpMaterial *mat, RwUInt32 flags)
 	}
 #endif
 }
-
 
 /*
  * GTA
@@ -446,7 +442,6 @@ SetLightsWithTimeOfDayColour(void *world)
 	}
 }
 
-
 void ColorFilter(void *sp) {
 	// grading values (i.e. the color matrix)
 	RwRGBAReal *red = (RwRGBAReal *)(sp + 0x30);
@@ -507,7 +502,7 @@ __attribute__((naked)) void ColorFilter_stub(void) {
 		"vldr s6, [sp, #(0x18+0x30)]\n" // blue.b
 	);
 
-	register uintptr_t retAddr asm ("r12") = (uintptr_t)text_base + 0x005B6444 + 0x1;
+	register uintptr_t retAddr asm ("r12") = (uintptr_t)gtasa_mod.text_base + 0x005B6444 + 0x1;
 
 	asm volatile(
 		"pop {r0-r11}\n"
@@ -515,42 +510,41 @@ __attribute__((naked)) void ColorFilter_stub(void) {
 	:: "r" (retAddr));
 }
 
-
 void
 patch_gfx(void)
 {
-	p_pAmbient = (RpLight**)so_find_addr("pAmbient");
-	p_pDirect = (RpLight**)so_find_addr("pDirect");
-	p_AmbientLightColourForFrame = (RwRGBAReal*)so_find_addr("AmbientLightColourForFrame");
-	p_AmbientLightColourForFrame_PedsCarsAndObjects = (RwRGBAReal*)so_find_addr("AmbientLightColourForFrame_PedsCarsAndObjects");
-	p_DirectionalLightColourForFrame = (RwRGBAReal*)so_find_addr("DirectionalLightColourForFrame");
-	p_DirectionalLightColourFromDay = (RwRGBAReal*)so_find_addr("DirectionalLightColourFromDay");
-	p_CTimeCycle__m_CurrentColours = (CColourSet*)so_find_addr("_ZN10CTimeCycle16m_CurrentColoursE");
-	p_CTimeCycle__m_vecDirnLightToSun = (CVector*)so_find_addr("_ZN10CTimeCycle19m_vecDirnLightToSunE");
-	p_gfLaRiotsLightMult = (float*)so_find_addr("gfLaRiotsLightMult");
-	p_CCoronas__LightsMult = (float*)so_find_addr("_ZN8CCoronas10LightsMultE");
-	p_CWeather__LightningFlash = (uint8_t*)so_find_addr("_ZN8CWeather14LightningFlashE");
+	p_pAmbient = (RpLight**)so_symbol(&gtasa_mod, "pAmbient");
+	p_pDirect = (RpLight**)so_symbol(&gtasa_mod, "pDirect");
+	p_AmbientLightColourForFrame = (RwRGBAReal*)so_symbol(&gtasa_mod, "AmbientLightColourForFrame");
+	p_AmbientLightColourForFrame_PedsCarsAndObjects = (RwRGBAReal*)so_symbol(&gtasa_mod, "AmbientLightColourForFrame_PedsCarsAndObjects");
+	p_DirectionalLightColourForFrame = (RwRGBAReal*)so_symbol(&gtasa_mod, "DirectionalLightColourForFrame");
+	p_DirectionalLightColourFromDay = (RwRGBAReal*)so_symbol(&gtasa_mod, "DirectionalLightColourFromDay");
+	p_CTimeCycle__m_CurrentColours = (CColourSet*)so_symbol(&gtasa_mod, "_ZN10CTimeCycle16m_CurrentColoursE");
+	p_CTimeCycle__m_vecDirnLightToSun = (CVector*)so_symbol(&gtasa_mod, "_ZN10CTimeCycle19m_vecDirnLightToSunE");
+	p_gfLaRiotsLightMult = (float*)so_symbol(&gtasa_mod, "gfLaRiotsLightMult");
+	p_CCoronas__LightsMult = (float*)so_symbol(&gtasa_mod, "_ZN8CCoronas10LightsMultE");
+	p_CWeather__LightningFlash = (uint8_t*)so_symbol(&gtasa_mod, "_ZN8CWeather14LightningFlashE");
 
-	RwFrameTransform = (RwFrame *(*)(RwFrame*,const RwMatrix*,RwOpCombineType))so_find_addr("_Z16RwFrameTransformP7RwFramePK11RwMatrixTag15RwOpCombineType");
-	RpLightSetColor = (RpLight *(*)(RpLight*, const RwRGBAReal*))so_find_addr("_Z15RpLightSetColorP7RpLightPK10RwRGBAReal");
+	RwFrameTransform = (RwFrame *(*)(RwFrame*,const RwMatrix*,RwOpCombineType))so_symbol(&gtasa_mod, "_Z16RwFrameTransformP7RwFramePK11RwMatrixTag15RwOpCombineType");
+	RpLightSetColor = (RpLight *(*)(RpLight*, const RwRGBAReal*))so_symbol(&gtasa_mod, "_Z15RpLightSetColorP7RpLightPK10RwRGBAReal");
 
-	openglAmbientLight = (float*)so_find_addr("openglAmbientLight");
-	p_rwOpenGLColorMaterialEnabled = (RwInt32*)so_find_addr("_rwOpenGLColorMaterialEnabled");
+	openglAmbientLight = (float*)so_symbol(&gtasa_mod, "openglAmbientLight");
+	p_rwOpenGLColorMaterialEnabled = (RwInt32*)so_symbol(&gtasa_mod, "_rwOpenGLColorMaterialEnabled");
 
-	emu_glLightModelfv = (void (*)(GLenum, const GLfloat *))so_find_addr("_Z18emu_glLightModelfvjPKf");
-	emu_glMaterialfv = (void (*)(GLenum, GLenum, const GLfloat *))so_find_addr("_Z16emu_glMaterialfvjjPKf");
-	emu_glColorMaterial = (void (*)(GLenum, GLenum))so_find_addr("_Z19emu_glColorMaterialjj");	// no-op
-	emu_glEnable = (void (*)(GLenum))so_find_addr("_Z12emu_glEnablej");
-	emu_glDisable = (void (*)(GLenum))so_find_addr("_Z13emu_glDisablej");
+	emu_glLightModelfv = (void (*)(GLenum, const GLfloat *))so_symbol(&gtasa_mod, "_Z18emu_glLightModelfvjPKf");
+	emu_glMaterialfv = (void (*)(GLenum, GLenum, const GLfloat *))so_symbol(&gtasa_mod, "_Z16emu_glMaterialfvjjPKf");
+	emu_glColorMaterial = (void (*)(GLenum, GLenum))so_symbol(&gtasa_mod, "_Z19emu_glColorMaterialjj");	// no-op
+	emu_glEnable = (void (*)(GLenum))so_symbol(&gtasa_mod, "_Z12emu_glEnablej");
+	emu_glDisable = (void (*)(GLenum))so_symbol(&gtasa_mod, "_Z13emu_glDisablej");
 
 	if(config.skygfx_ps2_shading){
 		// upload all material data regardless of shader flags
 		const uint16_t nop = 0xbf00;
-		kuKernelCpuUnrestrictedMemcpy((void *)(text_base + 0x1C1382), &nop, sizeof(nop));
-		kuKernelCpuUnrestrictedMemcpy((void *)(text_base + 0x1C13BA), &nop, sizeof(nop));
-		hook_thumb(so_find_addr("_Z36_rwOpenGLLightsSetMaterialPropertiesPK10RpMaterialj"), (uintptr_t)_rwOpenGLLightsSetMaterialProperties);
+		kuKernelCpuUnrestrictedMemcpy((void *)(gtasa_mod.text_base + 0x1C1382), &nop, sizeof(nop));
+		kuKernelCpuUnrestrictedMemcpy((void *)(gtasa_mod.text_base + 0x1C13BA), &nop, sizeof(nop));
+		hook_addr(so_symbol(&gtasa_mod, "_Z36_rwOpenGLLightsSetMaterialPropertiesPK10RpMaterialj"), (uintptr_t)_rwOpenGLLightsSetMaterialProperties);
 
-		hook_thumb(so_find_addr("_Z28SetLightsWithTimeOfDayColourP7RpWorld"), (uintptr_t)SetLightsWithTimeOfDayColour);
+		hook_addr(so_symbol(&gtasa_mod, "_Z28SetLightsWithTimeOfDayColourP7RpWorld"), (uintptr_t)SetLightsWithTimeOfDayColour);
 	}
 
 	// Enable PS2-like color filter
@@ -563,23 +557,21 @@ patch_gfx(void)
 		// .text:005B6440                 VSTR            S4, [SP,#0x24]
 		// .text:005B6444                 VSTR            S6, [SP,#0x18]
 		// .text:005B6448                 BEQ             loc_5B64EC
-		hook_thumb((uintptr_t)text_base + 0x005B643C, (uintptr_t)ColorFilter_stub);
-		kuKernelCpuUnrestrictedMemcpy((void *)(text_base + 0x005B6444), (void *)(text_base + 0x005B63DC), sizeof(uint16_t));
-		kuKernelCpuUnrestrictedMemcpy((void *)(text_base + 0x005B6446), (void *)(text_base + 0x005B63EA), sizeof(uint16_t));
+		hook_addr((uintptr_t)gtasa_mod.text_base + 0x005B643C + 0x1, (uintptr_t)ColorFilter_stub);
+		kuKernelCpuUnrestrictedMemcpy((void *)(gtasa_mod.text_base + 0x005B6444), (void *)(gtasa_mod.text_base + 0x005B63DC), sizeof(uint16_t));
+		kuKernelCpuUnrestrictedMemcpy((void *)(gtasa_mod.text_base + 0x005B6446), (void *)(gtasa_mod.text_base + 0x005B63EA), sizeof(uint16_t));
 	}
 
 	// Enable PS2-like sun corona
 	if(config.skygfx_ps2_sun){
 		const uint32_t nop2 = 0xbf00bf00;
-		kuKernelCpuUnrestrictedMemcpy((void *)(text_base + 0x005A26B0), &nop2, sizeof(nop2));
+		kuKernelCpuUnrestrictedMemcpy((void *)(gtasa_mod.text_base + 0x005A26B0), &nop2, sizeof(nop2));
 	}
 }
-
 
 /*
  * Shader builder
  */
-
 
 void BuildVertexSource_SkyGfx(int flags) {
 	char tmp[512];
@@ -765,7 +757,7 @@ void BuildVertexSource_SkyGfx(int flags) {
 				else
 					VTX_EMIT("float3 WorldNormal = mul(mul(float3x3(BoneToLocal), Normal), float3x3(ObjMatrix));");
 			} else {
-				VTX_EMIT("float3 WorldNormal = (mul(float4(Normal, 0.0), ObjMatrix)).xyz;");
+				VTX_EMIT("float3 WorldNormal = mul(Normal, float3x3(ObjMatrix));");
 			}
 		}
 	} else {
@@ -785,7 +777,7 @@ void BuildVertexSource_SkyGfx(int flags) {
 			tex = "TexCoord0";
 
 		if (flags & FLAG_TEXMATRIX)
-			VTX_EMIT("Out_Tex0 = mul(float3(%s, 1.0), NormalMatrix).xy;", tex);
+			VTX_EMIT("Out_Tex0 = mul(%s, float2x2(NormalMatrix));", tex);
 		else
 			VTX_EMIT("Out_Tex0 = %s;", tex);
 	}
@@ -810,7 +802,7 @@ void BuildVertexSource_SkyGfx(int flags) {
 	if (flags & FLAG_LIGHTING) {
 		//VTX_EMIT("half3 Out_LightingColor;");
 
-		VTX_EMIT("half3 ambEmissLight = half3(0.0, 0.0, 0.0f);");
+		VTX_EMIT("half3 ambEmissLight = half3(0.0, 0.0, 0.0);");
 		VTX_EMIT("half3 diffColor = half3(0.0, 0.0, 0.0);");
 
 		// Ambient and Emissive Light
@@ -899,8 +891,8 @@ void BuildVertexSource_SkyGfx(int flags) {
 			// Low quality setting -- PS2 style
 
 			// ps2 specdot - reflect in view space
-			VTX_EMIT("half3 ViewNormal = (mul(float4(WorldNormal, 0.0), ViewMatrix)).xyz;");
-			VTX_EMIT("half3 ViewLight = (mul(float4(DirLightDirection, 0.0), ViewMatrix)).xyz;");
+			VTX_EMIT("half3 ViewNormal = mul(WorldNormal, float3x3(ViewMatrix));");
+			VTX_EMIT("half3 ViewLight = mul(DirLightDirection, float3x3(ViewMatrix));");
 			VTX_EMIT("half3 V = ViewLight - 2.0*ViewNormal*dot(ViewNormal, ViewLight);");
 			// find some nice specular value -- not the real thing unfortunately
 			VTX_EMIT("half specAmt = 1.0 * EnvMapCoefficient * DirLightDiffuseColor.x;");
@@ -941,8 +933,6 @@ void BuildVertexSource_SkyGfx(int flags) {
 
 	VTX_EMIT("}");
 }
-
-
 
 void BuildPixelSource_SkyGfx(int flags) {
 	char tmp[512];
@@ -1042,7 +1032,7 @@ void BuildPixelSource_SkyGfx(int flags) {
 				PXL_EMIT("fcolor.xyz += tex2D(EnvMap, Out_Tex1).xyz * Out_Spec.w;");
 			} else if (flags & FLAG_SPHERE_ENVMAP) {
 				PXL_EMIT("half2 ReflPos = normalize(Out_Refl.xy) * (Out_Refl.z * 0.5 + 0.5);");
-				PXL_EMIT("ReflPos = (ReflPos * half2(0.5, 0.5)) + half2(0.5, 0.5);");
+				PXL_EMIT("ReflPos = (ReflPos * 0.5) + 0.5;");
 				PXL_EMIT("half4 ReflTexture = tex2D(EnvMap, ReflPos);");
 				PXL_EMIT("fcolor.xyz = lerp(fcolor.xyz, ReflTexture.xyz, EnvMapCoefficient);");
 				PXL_EMIT("fcolor.w += ReflTexture.b * 0.125;");
@@ -1052,7 +1042,7 @@ void BuildPixelSource_SkyGfx(int flags) {
 			if(flags & FLAG_ENVMAP){
 				// PS2-style specdot
 				// We don't actually have the texture. so simulate it
-				PXL_EMIT("half2 unpack = (Out_Spec.xy-half2(0.5, 0.5))*2.0;");
+				PXL_EMIT("half2 unpack = (Out_Spec.xy-0.5)*2.0;");
 				PXL_EMIT("half3 specColor = half3(Out_Spec.z, Out_Spec.z, Out_Spec.z);");
 				PXL_EMIT("half dist = unpack.x*unpack.x + unpack.y*unpack.y;");
 				// outside the dot
